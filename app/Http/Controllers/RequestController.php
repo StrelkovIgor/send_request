@@ -11,7 +11,7 @@ class RequestController extends Controller
     public function sendRequest(SendRequest $request)
     {
         RequestModel::create($request->toArray());
-        return response()->json(['success' => true], 200);
+        return response()->json(['success' => true], 201);
     }
 
 }

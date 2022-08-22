@@ -21,7 +21,7 @@ class RequestTest extends TestCase
 
         $response = $this->post(route('send_request'), $createRequest);
 
-        $response->assertStatus(200);
+        $response->assertStatus(201);
 
         $lastRequest = Request::orderBy('id', 'DESC')->first();
 
@@ -73,5 +73,55 @@ class RequestTest extends TestCase
         $createRequest = $createRequest->only($fllable);
 
         return [$createRequest, $fllable];
+    }
+
+    /**
+     * @test
+     */
+    public function good_send_response()
+    {
+        $createRequest = Request::factory()->state(function(){
+            return [
+                'status' => Request::STATUS_ACTIVE,
+                'comment' => null
+            ];
+        })->create();
+
+        $responseMessage = $this->faker->text(rand(150, 200));
+
+        $response = $this->put(
+            route('send_answer', ['request_model' => $createRequest->id]),
+            ['comment' => $responseMessage]
+        );
+
+        $response->assertStatus(200);
+
+        $createRequest->refresh();
+
+        $this->assertEquals($createRequest->status, Request::STATUS_RESOLVED);
+
+        $this->assertEquals($createRequest->comment, $responseMessage);
+    }
+
+    /**
+     * @test
+     */
+    public function ban_on_response_with_certain_status()
+    {
+        $createRequest = Request::factory()->state(function(){
+            return [
+                'status' => Request::STATUS_RESOLVED,
+                'comment' => $this->faker->text(rand(150, 200))
+            ];
+        })->create();
+
+        $responseMessage = $this->faker->text(rand(150, 200));
+
+        $response = $this->put(
+            route('send_answer', ['request_model' => $createRequest->id]),
+            ['comment' => $responseMessage]
+        );
+
+        $response->assertStatus(403);
     }
 }
