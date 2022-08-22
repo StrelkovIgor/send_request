@@ -15,4 +15,5 @@ yarn-error.log
 /.idea
 /.vscode
 
-./docker/logs
+/docker/logs/*
+/docker/.data/*
