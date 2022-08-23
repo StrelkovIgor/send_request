@@ -27,4 +27,18 @@ class Request extends Model
     const STATUS_ACTIVE = 'Active';
     const STATUS_RESOLVED = 'Resolved';
 
+    public function hasResolved(): bool
+    {
+        return $this->status === self::STATUS_RESOLVED && $this->comment;
+    }
+
+    public function answer(string $comment): void
+    {
+        $this->status = self::STATUS_RESOLVED;
+        $this->comment = $comment;
+        $this->save();
+
+        event(new RequestAnswer($this));
+    }
+
 }

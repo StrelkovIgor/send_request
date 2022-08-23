@@ -108,14 +108,14 @@ class RequestTest extends TestCase
      */
     public function ban_on_response_with_certain_status()
     {
-        $createRequest = Request::factory()->state(function(){
+        $responseMessage = $this->faker->text(rand(150, 200));
+
+        $createRequest = Request::factory()->state(function() use($responseMessage){
             return [
                 'status' => Request::STATUS_RESOLVED,
-                'comment' => $this->faker->text(rand(150, 200))
+                'comment' => $responseMessage
             ];
         })->create();
-
-        $responseMessage = $this->faker->text(rand(150, 200));
 
         $response = $this->put(
             route('send_answer', ['request_model' => $createRequest->id]),

@@ -33,3 +33,7 @@ services:
             environment:
                 - MYSQL_ROOT_PASSWORD=root
                 - MYSQL_DATABASE=app
+        redis:
+            image: redis:latest
+            ports:
+                - "6379:6379"
