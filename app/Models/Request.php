@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Events\RequestAnswer;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request as RequestHttp;
 
 /**
  * Class Request
@@ -39,6 +41,22 @@ class Request extends Model
         $this->save();
 
         event(new RequestAnswer($this));
+    }
+
+    public static function filters(Builder $builder, RequestHttp $request)
+    {
+        if ($request->status) {
+            $builder->where('status', $request->status);
+        }
+
+        if ($request->getDateFrom()) {
+            $builder->where('created_at', '>', $request->getDateFrom());
+        }
+
+        if ($request->getDateTo()) {
+            $builder->where('created_at', '<', $request->getDateTo());
+        }
+
     }
 
 }

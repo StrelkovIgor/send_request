@@ -124,4 +124,22 @@ class RequestTest extends TestCase
 
         $response->assertStatus(403);
     }
+
+    /**
+     * @test
+     */
+    public function list_of_orders_by_filter()
+    {
+        $createRequest = Request::factory(50)->create();
+        $countByStatus = $createRequest->where('status', '=', Request::STATUS_RESOLVED)->count();
+
+        $response = $this->get(route('list_request', [
+            'pageList' => 50,
+            'status' => Request::STATUS_RESOLVED
+        ]));
+
+        $response->assertStatus(200);
+
+        $this->assertEquals(count($response->json('data')), $countByStatus);
+    }
 }

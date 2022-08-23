@@ -21,4 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::post('/requests/', [RequestController::class, 'sendRequest'])->name('send_request');
 Route::put('/requests/{request_model}', [RequestController::class, 'sendAnswer'])->where('request_model', '[0-9]+')->name('send_answer');
+Route::get('/requests', [RequestController::class, 'listRequest'])->name('list_request');
 
